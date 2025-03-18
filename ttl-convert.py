@@ -1,3 +1,5 @@
+# einfaches Skript zum Umwandeln von CSV-Dateien in SKOS-RDF
+
 import requests
 import pandas as pd
 import urllib.parse
@@ -80,7 +82,6 @@ def df2Skos(df, baseLanguageLabel, baseUri, seperator):
 
     for index, row in df.iterrows():
         if row["prefLabel"] and isinstance(row["prefLabel"], str) and row["notation"] and isinstance(row["notation"], str):
-            #print(row["prefLabel"], row["notation"])
             concept = URIRef(thesaurusAddendum + row['notation'])
             g.add ((concept, RDF.type, SKOS.Concept))
             for prop, pred, obj, isLang in propertyTuples+extendedTuples:
@@ -106,7 +107,7 @@ def main(link, baseLanguageLabel, propertyMatchDict, seperator):
         f.write(text)
     df = pd.read_csv('polishedData.csv', encoding="utf-8")
     graph = df2Skos(df, baseLanguageLabel, baseUri, seperator)
-    graph.serialize(destination='thesaurus.ttl', format='turtle')   
+    graph.serialize(destination=baseUri.split("/")[-1]+'.ttl', format='turtle')   
     #graph.serialize(destination='thesaurus.json-ld', format='json-ld')
 
 link = "Technik_Thesaurus_REM.csv"
